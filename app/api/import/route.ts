@@ -1,80 +1,79 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import { connectDB } from "@/lib/mongodb";
+import Product from "@/models/Product";
+import fetch from "node-fetch";
+import * as cheerio from "cheerio";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const { url } = await req.json();
 
-    const url = body.url;
+    if (!url) {
+      return NextResponse.json({
+        success: false,
+        error: "URL is required",
+      });
+    }
 
-    const browser = await puppeteer.launch({
-      headless: true,
+    // Fetch the product page
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+      },
+    });
+    const html = await res.text();
+
+    // Parse with cheerio
+    const $ = cheerio.load(html);
+
+    // Extract Temu product details
+    const title =
+      $("h1[data-testid='ProductTitle']").text() ||
+      $("title").text();
+
+    const priceText = $("div[data-testid='ProductPrice']")
+      .text()
+      .replace(/[^\d.]/g, "");
+    const price = parseFloat(priceText) || 0;
+
+    const image =
+      $("img[data-testid='GalleryImage']")
+        .first()
+        .attr("src") || "";
+
+    const description =
+      $("meta[name='description']").attr("content") || "";
+
+    if (!title || !image) {
+      return NextResponse.json({
+        success: false,
+        error: "Failed to extract product info from Temu",
+      });
+    }
+
+    // Save to MongoDB
+    await connectDB();
+
+    const newProduct = new Product({
+      name: title,
+      price,
+      description,
+      image,
+      url,
     });
 
-    const page = await browser.newPage();
-
-    await page.goto(url, {
-      waitUntil: "networkidle2",
-    });
-
-    const data = await page.evaluate(() => {
-      const rawTitle =
-        document.title || "Imported Product";
-
-      const title = rawTitle
-        .replace(/拼多多/g, "")
-        .replace(/Pinduoduo/g, "")
-        .replace(/\|.*/g, "")
-        .trim();
-
-      let image =
-        (
-          document.querySelector(
-            'meta[property="og:image"]'
-          ) as HTMLMetaElement
-        )?.content || "";
-
-      if (!image) {
-        const firstImg =
-          document.querySelector("img");
-
-        image =
-          (firstImg as HTMLImageElement)?.src || "";
-      }
-
-      const description =
-        (
-          document.querySelector(
-            'meta[property="og:description"]'
-          ) as HTMLMetaElement
-        )?.content || "";
-
-      return {
-        title,
-        image,
-        description,
-      };
-    });
-
-    await browser.close();
-
-    const generatedPrice = Math.floor(
-      Math.random() * (4999 - 999) + 999
-    );
+    await newProduct.save();
 
     return NextResponse.json({
       success: true,
-      product: {
-        name: data.title,
-        image: data.image,
-        description: data.description,
-        price: generatedPrice,
-      },
+      product: newProduct,
     });
-  } catch (error: any) {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: (error as any).message,
     });
   }
 }
