@@ -1,8 +1,10 @@
 import "./globals.css";
 
+import Script from "next/script";
+
 export const metadata = {
-  title: "0o0o",
-  description: "Store",
+  title: "0o0o Store",
+  description: "Ecommerce Store",
 };
 
 export default function RootLayout({
@@ -12,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      </body>
     </html>
   );
 }
