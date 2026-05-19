@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
-import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 
 export async function POST(req: Request) {
