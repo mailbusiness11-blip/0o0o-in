@@ -66,7 +66,7 @@ export default function BulkImportPage() {
         onChange={(e) =>
           setUrls(e.target.value)
         }
-        placeholder="Paste one Pinduoduo URL per line"
+        placeholder="Paste one product URL per line"
         className="w-full h-96 border p-4 rounded-xl"
       />
 
