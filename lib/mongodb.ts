@@ -1,12 +1,30 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI =
-  "mongodb://127.0.0.1:27017/ecommerce";
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
-export async function connectDB() {
-  if (mongoose.connections[0].readyState) {
-    return;
+if (!MONGODB_URI) {
+  throw new Error("Please add MONGODB_URI");
+}
+
+let cached = (global as any).mongoose;
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  await mongoose.connect(MONGODB_URI);
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
+      return mongoose;
+    });
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
+
+export default connectDB;
