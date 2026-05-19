@@ -1,23 +1,12 @@
+@import "tailwindcss";
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   background: #f5f5f5;
-  font-family: Arial, sans-serif;
-}
-
-a {
-  text-decoration: none;
-}
-
-button {
-  transition: 0.2s;
-}
-
-button:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
+  font-family: Arial, Helvetica, sans-serif;
 }

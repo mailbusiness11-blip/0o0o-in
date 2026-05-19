@@ -1,123 +1,58 @@
-"use client";
+async function getProducts() {
+  const res = await fetch(
+    "http://localhost:3000/api/products",
+    {
+      cache: "no-store",
+    }
+  );
 
-import { useEffect, useState } from "react";
+  return res.json();
+}
 
-import { useCart } from "./context/CartContext";
-
-export default function ProductsPage() {
-  const { cart, addToCart } = useCart();
-
-  const [products, setProducts] = useState<any[]>([]);
-
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.products);
-      });
-  }, []);
+export default async function HomePage() {
+  const data = await getProducts();
 
   return (
-    <div
-      style={{
-        padding: "40px",
-        background: "#f5f5f5",
-        minHeight: "100vh",
-        fontFamily: "Arial",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "30px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "40px",
-          }}
-        >
-          Ecommerce Store
-        </h1>
+    <main className="p-10 bg-gray-100 min-h-screen">
+      <h1 className="text-4xl font-bold mb-8">
+        0o0o Store
+      </h1>
 
-        <a
-          href="/cart"
-          style={{
-            textDecoration: "none",
-            color: "black",
-            fontWeight: "bold",
-            fontSize: "20px",
-          }}
-        >
-          Cart ({cart.length})
-        </a>
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px",
-        }}
-      >
-        {products.map((product) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {data.products.map((product: any) => (
           <div
             key={product._id}
-            style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            }}
+            className="bg-white rounded-2xl shadow-md overflow-hidden"
           >
             <img
               src={product.image}
-              alt={product.title}
-              style={{
-                width: "100%",
-                height: "220px",
-                objectFit: "cover",
-                borderRadius: "10px",
-              }}
+              alt={product.name}
+              className="w-full h-64 object-cover"
             />
 
-            <h2
-              style={{
-                marginTop: "15px",
-              }}
-            >
-              {product.title}
-            </h2>
+            <div className="p-5">
+              <h2 className="text-2xl font-semibold">
+                {product.name}
+              </h2>
 
-            <p
-              style={{
-                color: "green",
-                fontWeight: "bold",
-                marginTop: "10px",
-              }}
-            >
-              {product.price}
-            </p>
+              <p className="text-gray-600 mt-2">
+                {product.description}
+              </p>
 
-            <button
-              onClick={() => addToCart(product)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                marginTop: "15px",
-                background: "black",
-                color: "white",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-              }}
-            >
-              Add To Cart
-            </button>
+              <p className="text-2xl font-bold mt-4">
+                ₹{product.price}
+              </p>
+
+              <a
+                href={`/product/${product._id}`}
+                className="inline-block mt-5 bg-black text-white px-5 py-3 rounded-lg"
+              >
+                View Product
+              </a>
+            </div>
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

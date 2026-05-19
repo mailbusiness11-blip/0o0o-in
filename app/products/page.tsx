@@ -1,128 +1,53 @@
-"use client";
+async function getProduct(id: string) {
+  const res = await fetch(
+    `http://localhost:3000/api/products`,
+    {
+      cache: "no-store",
+    }
+  );
 
-import { useEffect, useState } from "react";
+  const data = await res.json();
 
-export default function ProductsPage() {
-  const [products, setProducts] =
-    useState<any[]>([]);
+  return data.products.find(
+    (p: any) => p._id === id
+  );
+}
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+export default async function ProductPage({
+  params,
+}: any) {
+  const product = await getProduct(params.id);
 
-  async function fetchProducts() {
-    const response = await fetch(
-      "/api/products"
-    );
-
-    const data =
-      await response.json();
-
-    setProducts(data.products);
+  if (!product) {
+    return <div>Product not found</div>;
   }
 
   return (
-    <div
-      style={{
-        padding: "40px",
-        background: "#f5f5f5",
-        minHeight: "100vh",
-        fontFamily: "Arial",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "60px",
-          marginBottom: "40px",
-        }}
-      >
-        Products
-      </h1>
+    <div className="p-10 max-w-5xl mx-auto">
+      <div className="grid md:grid-cols-2 gap-10">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full rounded-xl"
+        />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(3, 1fr)",
-          gap: "30px",
-        }}
-      >
-        {products.map((product) => (
-          <div
-            key={product._id}
-            style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "20px",
-            }}
-          >
-            {product.image ? (
-              <img
-                src={product.image}
-                alt={product.title}
-                style={{
-                  width: "100%",
-                  height: "300px",
-                  objectFit: "cover",
-                  borderRadius: "12px",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "300px",
-                  background: "#ddd",
-                  borderRadius: "12px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#666",
-                  fontSize: "22px",
-                }}
-              >
-                No Image
-              </div>
-            )}
+        <div>
+          <h1 className="text-4xl font-bold">
+            {product.name}
+          </h1>
 
-            <h2
-              style={{
-                marginTop: "20px",
-                fontSize: "28px",
-              }}
-            >
-              {product.title}
-            </h2>
+          <p className="mt-4 text-gray-600">
+            {product.description}
+          </p>
 
-            <p
-              style={{
-                color: "green",
-                fontSize: "24px",
-                fontWeight: "bold",
-                marginTop: "10px",
-              }}
-            >
-              {product.price}
-            </p>
+          <p className="text-3xl font-bold mt-6">
+            ₹{product.price}
+          </p>
 
-            <a
-              href={`/products/${product._id}`}
-              style={{
-                display: "block",
-                marginTop: "20px",
-                padding: "15px",
-                background: "black",
-                color: "white",
-                textAlign: "center",
-                borderRadius: "12px",
-                textDecoration: "none",
-                fontSize: "18px",
-              }}
-            >
-              View Product
-            </a>
-          </div>
-        ))}
+          <button className="mt-6 bg-black text-white px-6 py-3 rounded-lg">
+            Buy Now
+          </button>
+        </div>
       </div>
     </div>
   );
