@@ -1,78 +1,87 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
-import * as cheerio from "cheerio";
 
 export async function POST(req: Request) {
   try {
     const { url } = await req.json();
+    if (!url) return NextResponse.json({ success: false });
 
-    if (!url) {
-      return NextResponse.json({
-        success: false,
-        error: "URL is required",
-      });
-    }
+    // Extract product ID from Temu URL
+    const match = url.match(/g-(\d+)/);
+    if (!match) return NextResponse.json({ success: false });
 
-    // Fetch the product page
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-      },
-    });
-    const html = await res.text();
+    const productId = match[1];
 
-    // Parse with cheerio
-    const $ = cheerio.load(html);
+    // Fetch JSON from Temu API
+    const apiRes = await fetch(
+      `https://api.temu.com/v2/goods/detail?goods_id=${productId}`
+    );
+    const data = await apiRes.json();
 
-    // Extract Temu product details
-    const title =
-      $("h1[data-testid='ProductTitle']").text() ||
-      $("title").text();
+    const productData = data?.data;
+    if (!productData) return NextResponse.json({ success: false });
 
-    const priceText = $("div[data-testid='ProductPrice']")
-      .text()
-      .replace(/[^\d.]/g, "");
-    const price = parseFloat(priceText) || 0;
-
-    const image =
-      $("img[data-testid='GalleryImage']")
-        .first()
-        .attr("src") || "";
-
-    const description =
-      $("meta[name='description']").attr("content") || "";
-
-    if (!title || !image) {
-      return NextResponse.json({
-        success: false,
-        error: "Failed to extract product info from Temu",
-      });
-    }
-
-    // Save to MongoDB
+    // Connect to MongoDB
     await connectDB();
 
-    const newProduct = new Product({
-      name: title,
-      price,
-      description,
-      image,
+    // Save product
+    const product = new Product({
+      name: productData.goods_name,
+      price: productData.price || 0,
+      description: productData.goods_desc || "",
+      image: productData.pictures?.[0]?.url || "",
       url,
     });
 
-    await newProduct.save();
+    await product.save();
 
-    return NextResponse.json({
-      success: true,
-      product: newProduct,
-    });
+    return NextResponse.json({ success: true, product });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({
-      success: false,
-      error: (error as any).message,
+    return NextResponse.json({ success: false, error: error.message });
+  }
+}import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import Product from "@/models/Product";
+
+export async function POST(req: Request) {
+  try {
+    const { url } = await req.json();
+    if (!url) return NextResponse.json({ success: false });
+
+    // Extract product ID from Temu URL
+    const match = url.match(/g-(\d+)/);
+    if (!match) return NextResponse.json({ success: false });
+
+    const productId = match[1];
+
+    // Fetch JSON from Temu API
+    const apiRes = await fetch(
+      `https://api.temu.com/v2/goods/detail?goods_id=${productId}`
+    );
+    const data = await apiRes.json();
+
+    const productData = data?.data;
+    if (!productData) return NextResponse.json({ success: false });
+
+    // Connect to MongoDB
+    await connectDB();
+
+    // Save product
+    const product = new Product({
+      name: productData.goods_name,
+      price: productData.price || 0,
+      description: productData.goods_desc || "",
+      image: productData.pictures?.[0]?.url || "",
+      url,
     });
+
+    await product.save();
+
+    return NextResponse.json({ success: true, product });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ success: false, error: error.message });
   }
 }
