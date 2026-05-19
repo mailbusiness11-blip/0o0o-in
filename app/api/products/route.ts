@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+// Demo product data — 100+ products can be added here
 const products = [
   {
     _id: "1",
@@ -51,6 +52,7 @@ const products = [
     url: "#",
     category: "Shoes",
   },
+  // Add more demo products here up to 100+ for full testing
 ];
 
 export async function GET() {
