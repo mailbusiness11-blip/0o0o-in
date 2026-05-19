@@ -16,6 +16,7 @@
     "mongoose": "^8.24.0",
     "next": "^16.0.0",
     "next-auth": "^4.24.14",
+    "node-fetch": "^2.7.0",
     "puppeteer": "^25.0.4",
     "razorpay": "^2.9.6",
     "react": "^19.0.0",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",
     "@types/node": "^22.15.21",
+    "@types/node-fetch": "^2.6.13",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
     "postcss": "^8.5.4",
