@@ -1,0 +1,46 @@
+import { NextResponse } from "next/server";
+
+export async function GET() {
+
+  try {
+
+    const response = await fetch(
+      "https://pinduoduo-product-data.p.rapidapi.com/pdd/item_detail/v4?item_id=587387786906",
+      {
+
+        method: "GET",
+
+        headers: {
+
+          "x-rapidapi-key":
+            "fd7cfd414amsh4223076d9188573p169008jsn637c8d64e3cb",
+
+          "x-rapidapi-host":
+            "pinduoduo-product-data.p.rapidapi.com",
+
+        },
+
+      }
+    );
+
+    const result = await response.json();
+
+    return NextResponse.json({
+
+      FULL_RESPONSE: result,
+
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return NextResponse.json({
+
+      error: "failed",
+
+    });
+
+  }
+
+}

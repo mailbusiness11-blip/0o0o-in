@@ -1,46 +1,78 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
 
-    const response = await fetch(
-      "https://pinduoduo-product-data.p.rapidapi.com/pdd/item_detail/v4?item_id=587387786906",
-      {
+    const goodsIds =
+      searchParams.get("goods_ids") ||
+      searchParams.get("goodsIds") ||
+      searchParams.get("itemId");
 
-        method: "GET",
-
-        headers: {
-
-          "x-rapidapi-key":
-            "fd7cfd414amsh4223076d9188573p169008jsn637c8d64e3cb",
-
-          "x-rapidapi-host":
-            "pinduoduo-product-data.p.rapidapi.com",
-
+    if (!goodsIds) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Missing goods_ids",
+          example: "/api/pinduoduo?goods_ids=6238377785",
         },
+        { status: 400 }
+      );
+    }
 
-      }
+    const rapidApiKey = process.env.RAPIDAPI_KEY;
+    const rapidApiHost = process.env.RAPIDAPI_HOST;
+
+    if (!rapidApiKey || !rapidApiHost) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "RapidAPI env variables missing",
+        },
+        { status: 500 }
+      );
+    }
+
+    const apiUrl = `https://${rapidApiHost}/Good/GoodsBasic.ashx?goods_ids=${encodeURIComponent(
+      goodsIds
+    )}`;
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-rapidapi-host": rapidApiHost,
+        "x-rapidapi-key": rapidApiKey,
+      },
+      cache: "no-store",
+    });
+
+    const text = await response.text();
+
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+
+    return NextResponse.json({
+      success: response.ok,
+      status: response.status,
+      goods_ids: goodsIds,
+      endpoint: "/Good/GoodsBasic.ashx",
+      data,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: error?.message || "Unknown error",
+      },
+      { status: 500 }
     );
-
-    const result = await response.json();
-
-    return NextResponse.json({
-
-      FULL_RESPONSE: result,
-
-    });
-
-  } catch (error) {
-
-    console.log(error);
-
-    return NextResponse.json({
-
-      error: "failed",
-
-    });
-
   }
-
 }
