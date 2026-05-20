@@ -45,13 +45,13 @@ export default function HomePage() {
 
     <main className="min-h-screen bg-gray-100 p-5">
 
-      {/* Coming Soon Watermark */}
-      <div className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full shadow-xl z-50">
-        🚀 Coming Soon
+      {/* TOP COMING SOON */}
+      <div className="bg-black text-white text-center py-3 rounded-xl mb-6 text-lg font-bold animate-pulse">
+        🚀 Coming Soon — 0o0o India Marketplace
       </div>
 
       {/* Header */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-8">
 
         <h1 className="text-5xl font-extrabold">
           0o0o India
@@ -63,23 +63,31 @@ export default function HomePage() {
 
       </div>
 
-      {/* Categories */}
-      <div className="flex gap-3 overflow-x-auto mb-8 pb-2">
+      {/* CATEGORY SECTION */}
+      <div className="mb-8">
 
-        {categories.map((category) => (
+        <h2 className="text-2xl font-bold mb-4">
+          Shop By Categories
+        </h2>
 
-          <div
-            key={category}
-            className="bg-white px-5 py-2 rounded-full shadow whitespace-nowrap font-medium"
-          >
-            {category}
-          </div>
+        <div className="flex flex-wrap gap-3">
 
-        ))}
+          {categories.map((category) => (
+
+            <div
+              key={category}
+              className="bg-white border px-5 py-3 rounded-2xl shadow font-medium"
+            >
+              {category}
+            </div>
+
+          ))}
+
+        </div>
 
       </div>
 
-      {/* Products */}
+      {/* PRODUCTS */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 
         {products.map((product) => (
