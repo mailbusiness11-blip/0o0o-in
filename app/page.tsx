@@ -1,93 +1,95 @@
-async function getProduct(id: string) {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/products/${id}`,
-      {
-        cache: "no-store",
-      }
-    );
+export default function HomePage() {
 
-    const data = await res.json();
+  const products = [
 
-    return data.product;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-}
+    {
+      id: 1,
+      name: "Wireless Earbuds",
+      price: "₹1999",
+      image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
+    },
 
-export default async function ProductPage({
-  params,
-}: any) {
-  const product = await getProduct(
-    params.id
-  );
+    {
+      id: 2,
+      name: "Elegant Summer Dress",
+      price: "₹1499",
+      image: "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
+    },
 
-  if (!product) {
-    return (
-      <main className="min-h-screen p-10">
-        <h1 className="text-4xl font-bold">
-          Product not found
-        </h1>
-      </main>
-    );
-  }
+    {
+      id: 3,
+      name: "Luxury Skin Care Set",
+      price: "₹1599",
+      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 4,
+      name: "Yoga Mat",
+      price: "₹899",
+      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+    },
+
+  ];
 
   return (
-    <main className="min-h-screen bg-white p-10">
-      <a
-        href="/"
-        className="text-blue-600"
-      >
-        ← Back to Home
-      </a>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-8">
-        <div>
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full rounded-2xl shadow"
-          />
-        </div>
+    <main className="min-h-screen bg-gray-100 p-5">
 
-        <div>
-          <h1 className="text-5xl font-bold">
-            {product.name}
-          </h1>
-
-          <p className="text-3xl mt-4">
-            ₹{product.price}
-          </p>
-
-          <p className="text-gray-600 mt-6 text-lg">
-            {product.description}
-          </p>
-
-          <button
-            onClick={() => {
-              const existingCart =
-                JSON.parse(
-                  localStorage.getItem(
-                    "cart"
-                  ) || "[]"
-                );
-
-              existingCart.push(product);
-
-              localStorage.setItem(
-                "cart",
-                JSON.stringify(existingCart)
-              );
-
-              alert("Added to cart");
-            }}
-            className="mt-8 bg-black text-white px-8 py-4 rounded-xl text-lg"
-          >
-            Add To Cart
-          </button>
-        </div>
+      {/* Watermark */}
+      <div className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full shadow-xl z-50">
+        0o0o India • Coming Soon
       </div>
+
+      {/* Header */}
+      <div className="text-center mb-10">
+
+        <h1 className="text-5xl font-extrabold">
+          0o0o India
+        </h1>
+
+        <p className="text-gray-600 mt-3 text-lg">
+          India’s Cheapest Multi-Category Ecommerce Marketplace
+        </p>
+
+      </div>
+
+      {/* Products */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+
+        {products.map((product) => (
+
+          <div
+            key={product.id}
+            className="bg-white rounded-2xl overflow-hidden shadow-lg"
+          >
+
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-60 object-cover"
+            />
+
+            <div className="p-4">
+
+              <h2 className="font-bold text-lg">
+                {product.name}
+              </h2>
+
+              <p className="text-green-600 font-bold text-xl mt-2">
+                {product.price}
+              </p>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
     </main>
+
   );
+
 }
