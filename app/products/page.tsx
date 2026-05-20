@@ -15,9 +15,15 @@ interface ProductType {
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectedCategory, setSelectedCategory] =
+    useState("All");
+
+  const [searchQuery, setSearchQuery] =
+    useState("");
+
+  const [currentPage, setCurrentPage] =
+    useState(1);
 
   const itemsPerPage = 12;
 
@@ -47,68 +53,101 @@ export default function ProductsPage() {
     "Niche Fashion and Lifestyle",
   ];
 
-  // Filter products
+  // Filter Products
   const filteredProducts = products.filter((p) => {
     const matchesCategory =
-      selectedCategory === "All" || p.category === selectedCategory;
-    const matchesSearch = p.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+      selectedCategory === "All" ||
+      p.category === selectedCategory;
+
+    const matchesSearch =
+      p.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
     return matchesCategory && matchesSearch;
   });
 
   // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(
+    filteredProducts.length / itemsPerPage
+  );
+
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Reset page when filter/search changes
+  // Reset Page
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory, searchQuery]);
 
-  if (loading)
+  // Loading State
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl">
         Loading products...
       </div>
     );
+  }
 
-  if (products.length === 0)
+  // No Products
+  if (products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl">
         No products found
       </div>
     );
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-4">
+
+      {/* Watermark */}
+      <div className="fixed bottom-4 right-4 z-50 bg-black text-white px-4 py-2 rounded-full shadow-xl text-sm opacity-90">
+        0o0o India • Coming Soon
+      </div>
+
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-5">
-          Fashion Store
+      <div className="mb-6 text-center">
+
+        <h1 className="text-3xl md:text-5xl font-extrabold">
+          0o0o India
         </h1>
 
+        <p className="text-gray-600 mt-2 text-sm md:text-lg">
+          India’s Cheapest Multi-Category Ecommerce Marketplace
+        </p>
+
+        <p className="text-red-500 font-semibold mt-2 animate-pulse">
+          🚀 Coming Soon — Live Preview Version
+        </p>
+
         {/* Search */}
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-xl mx-auto mt-5">
           <input
             type="text"
             placeholder="Search products..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) =>
+              setSearchQuery(e.target.value)
+            }
             className="w-full bg-white border rounded-2xl px-5 py-3 outline-none focus:ring-2 focus:ring-black"
           />
         </div>
+
       </div>
 
       {/* Categories */}
       <div className="flex gap-2 overflow-x-auto pb-4 mb-6">
+
         {categories.map((category) => (
+
           <button
             key={category}
-            onClick={() => setSelectedCategory(category)}
+            onClick={() =>
+              setSelectedCategory(category)
+            }
             className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition ${
               selectedCategory === category
                 ? "bg-black text-white"
@@ -117,36 +156,51 @@ export default function ProductsPage() {
           >
             {category}
           </button>
+
         ))}
+
       </div>
 
-      {/* Products Grid */}
+      {/* Product Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
         {paginatedProducts.map((product) => (
+
           <div
             key={product._id}
             className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition duration-300"
           >
-            {/* Image */}
-            <a href={product.url} target="_blank" rel="noopener noreferrer">
+
+            {/* Product Image */}
+            <a
+              href={product.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+
               <img
                 src={product.image}
                 alt={product.name}
                 className="w-full h-56 object-cover"
               />
+
             </a>
 
-            {/* Content */}
+            {/* Product Content */}
             <div className="p-3">
+
               <h2 className="font-semibold text-sm md:text-base line-clamp-2 min-h-[40px]">
                 {product.name}
               </h2>
+
               <p className="text-green-600 font-bold text-lg mt-1">
                 ₹{product.price}
               </p>
+
               <p className="text-gray-500 text-xs mt-1 line-clamp-2 min-h-[32px]">
                 {product.description}
               </p>
+
               <a
                 href={product.url}
                 target="_blank"
@@ -155,46 +209,66 @@ export default function ProductsPage() {
               >
                 View Product
               </a>
+
             </div>
+
           </div>
+
         ))}
+
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
+
         <div className="flex justify-center items-center gap-2 mt-8 flex-wrap">
+
           {/* Prev */}
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
+            onClick={() =>
+              setCurrentPage((prev) => prev - 1)
+            }
             className="px-4 py-2 bg-white border rounded-xl disabled:opacity-40"
           >
             Prev
           </button>
 
           {/* Page Numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {Array.from(
+            { length: totalPages },
+            (_, i) => i + 1
+          ).map((page) => (
+
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
               className={`px-4 py-2 rounded-xl ${
-                currentPage === page ? "bg-black text-white" : "bg-white border"
+                currentPage === page
+                  ? "bg-black text-white"
+                  : "bg-white border"
               }`}
             >
               {page}
             </button>
+
           ))}
 
           {/* Next */}
           <button
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
+            onClick={() =>
+              setCurrentPage((prev) => prev + 1)
+            }
             className="px-4 py-2 bg-white border rounded-xl disabled:opacity-40"
           >
             Next
           </button>
+
         </div>
+
       )}
+
     </main>
   );
 }
