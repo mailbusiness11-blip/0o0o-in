@@ -1,14 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+
+  const [products, setProducts] = useState<any[]>([]);
 
   const [selectedCategory, setSelectedCategory] =
     useState("All");
 
   const [searchQuery, setSearchQuery] =
     useState("");
+
+  useEffect(() => {
+
+    async function fetchProducts() {
+
+      try {
+
+        const response =
+          await fetch("/api/pinduoduo");
+
+        const data = await response.json();
+
+        console.log(data);
+
+        setProducts(data.products || []);
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    }
+
+    fetchProducts();
+
+  }, []);
 
   const categories = [
     "All",
@@ -20,119 +49,7 @@ export default function HomePage() {
     "Lifestyle",
   ];
 
-  const allProducts = [
-
-    {
-      id: 1,
-      name: "Wireless Earbuds",
-      price: "₹1999",
-      category: "Electronics",
-      image:
-        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      name: "Gaming Mouse",
-      price: "₹1299",
-      category: "Electronics",
-      image:
-        "https://images.unsplash.com/photo-1527814050087-3793815479db?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 3,
-      name: "Elegant Summer Dress",
-      price: "₹1499",
-      category: "Fashion",
-      image:
-        "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
-    },
-
-    {
-      id: 4,
-      name: "Women Casual Top",
-      price: "₹999",
-      category: "Fashion",
-      image:
-        "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 5,
-      name: "Luxury Skin Care Set",
-      price: "₹1599",
-      category: "Beauty",
-      image:
-        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 6,
-      name: "Beauty Face Cream",
-      price: "₹699",
-      category: "Beauty",
-      image:
-        "https://images.unsplash.com/photo-1556228578-dd6b62e5d7b1?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 7,
-      name: "Yoga Mat",
-      price: "₹899",
-      category: "Health",
-      image:
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 8,
-      name: "Fitness Bottle",
-      price: "₹499",
-      category: "Health",
-      image:
-        "https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 9,
-      name: "Dog Bed",
-      price: "₹1299",
-      category: "Pet Care",
-      image:
-        "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 10,
-      name: "Pet Food Bowl",
-      price: "₹399",
-      category: "Pet Care",
-      image:
-        "https://images.unsplash.com/photo-1583511655826-05700442b31b?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 11,
-      name: "Luxury Handbag",
-      price: "₹2499",
-      category: "Lifestyle",
-      image:
-        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 12,
-      name: "Modern Sunglasses",
-      price: "₹899",
-      category: "Lifestyle",
-      image:
-        "https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=1200&auto=format&fit=crop",
-    },
-
-  ];
-
-  const filteredProducts = allProducts.filter((product) => {
+  const filteredProducts = products.filter((product) => {
 
     const matchesCategory =
       selectedCategory === "All" ||
@@ -238,7 +155,7 @@ export default function HomePage() {
               </h2>
 
               <p className="text-green-600 font-bold text-xl mt-2">
-                {product.price}
+                ₹{product.price}
               </p>
 
               <p className="text-gray-500 mt-2">
