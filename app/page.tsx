@@ -1,6 +1,17 @@
+"use client";
+
+import { useState } from "react";
+
 export default function HomePage() {
 
+  const [selectedCategory, setSelectedCategory] =
+    useState("All");
+
+  const [searchQuery, setSearchQuery] =
+    useState("");
+
   const categories = [
+    "All",
     "Electronics",
     "Fashion",
     "Beauty",
@@ -9,37 +20,78 @@ export default function HomePage() {
     "Lifestyle",
   ];
 
-  const products = [
+  const allProducts = [
 
     {
       id: 1,
       name: "Wireless Earbuds",
       price: "₹1999",
-      image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
+      category: "Electronics",
+      image:
+        "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
       name: "Elegant Summer Dress",
       price: "₹1499",
-      image: "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
+      category: "Fashion",
+      image:
+        "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
     },
 
     {
       id: 3,
       name: "Luxury Skin Care Set",
       price: "₹1599",
-      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
+      category: "Beauty",
+      image:
+        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 4,
       name: "Yoga Mat",
       price: "₹899",
-      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      category: "Health",
+      image:
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 5,
+      name: "Dog Bed",
+      price: "₹1299",
+      category: "Pet Care",
+      image:
+        "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 6,
+      name: "Luxury Handbag",
+      price: "₹2499",
+      category: "Lifestyle",
+      image:
+        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1200&auto=format&fit=crop",
     },
 
   ];
+
+  const filteredProducts = allProducts.filter((product) => {
+
+    const matchesCategory =
+      selectedCategory === "All" ||
+      product.category === selectedCategory;
+
+    const matchesSearch =
+      product.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+
+  });
 
   return (
 
@@ -63,7 +115,22 @@ export default function HomePage() {
 
       </div>
 
-      {/* CATEGORY SECTION */}
+      {/* SEARCH */}
+      <div className="max-w-xl mx-auto mb-8">
+
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) =>
+            setSearchQuery(e.target.value)
+          }
+          className="w-full bg-white border rounded-2xl px-5 py-3 outline-none shadow"
+        />
+
+      </div>
+
+      {/* CATEGORY FILTERS */}
       <div className="mb-8">
 
         <h2 className="text-2xl font-bold mb-4">
@@ -74,12 +141,19 @@ export default function HomePage() {
 
           {categories.map((category) => (
 
-            <div
+            <button
               key={category}
-              className="bg-white border px-5 py-3 rounded-2xl shadow font-medium"
+              onClick={() =>
+                setSelectedCategory(category)
+              }
+              className={`px-5 py-3 rounded-2xl shadow font-medium transition ${
+                selectedCategory === category
+                  ? "bg-black text-white"
+                  : "bg-white border"
+              }`}
             >
               {category}
-            </div>
+            </button>
 
           ))}
 
@@ -90,11 +164,11 @@ export default function HomePage() {
       {/* PRODUCTS */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
 
           <div
             key={product.id}
-            className="bg-white rounded-2xl overflow-hidden shadow-lg"
+            className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition"
           >
 
             <img
@@ -111,6 +185,10 @@ export default function HomePage() {
 
               <p className="text-green-600 font-bold text-xl mt-2">
                 {product.price}
+              </p>
+
+              <p className="text-gray-500 mt-2">
+                {product.category}
               </p>
 
             </div>
