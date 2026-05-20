@@ -1,5 +1,14 @@
 export default function HomePage() {
 
+  const categories = [
+    "Electronics",
+    "Fashion",
+    "Beauty",
+    "Health",
+    "Pet Care",
+    "Lifestyle",
+  ];
+
   const products = [
 
     {
@@ -36,9 +45,9 @@ export default function HomePage() {
 
     <main className="min-h-screen bg-gray-100 p-5">
 
-      {/* Watermark */}
+      {/* Coming Soon Watermark */}
       <div className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full shadow-xl z-50">
-        0o0o India • Coming Soon
+        🚀 Coming Soon
       </div>
 
       {/* Header */}
@@ -51,6 +60,22 @@ export default function HomePage() {
         <p className="text-gray-600 mt-3 text-lg">
           India’s Cheapest Multi-Category Ecommerce Marketplace
         </p>
+
+      </div>
+
+      {/* Categories */}
+      <div className="flex gap-3 overflow-x-auto mb-8 pb-2">
+
+        {categories.map((category) => (
+
+          <div
+            key={category}
+            className="bg-white px-5 py-2 rounded-full shadow whitespace-nowrap font-medium"
+          >
+            {category}
+          </div>
+
+        ))}
 
       </div>
 
