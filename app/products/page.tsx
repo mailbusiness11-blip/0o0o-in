@@ -55,6 +55,7 @@ export default function ProductsPage() {
 
   // Filter Products
   const filteredProducts = products.filter((p) => {
+
     const matchesCategory =
       selectedCategory === "All" ||
       p.category === selectedCategory;
@@ -65,6 +66,7 @@ export default function ProductsPage() {
         .includes(searchQuery.toLowerCase());
 
     return matchesCategory && matchesSearch;
+
   });
 
   // Pagination
@@ -82,7 +84,7 @@ export default function ProductsPage() {
     setCurrentPage(1);
   }, [selectedCategory, searchQuery]);
 
-  // Loading State
+  // Loading
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl">
@@ -101,6 +103,7 @@ export default function ProductsPage() {
   }
 
   return (
+
     <main className="min-h-screen bg-gray-100 p-4">
 
       {/* Watermark */}
@@ -125,6 +128,7 @@ export default function ProductsPage() {
 
         {/* Search */}
         <div className="max-w-xl mx-auto mt-5">
+
           <input
             type="text"
             placeholder="Search products..."
@@ -134,6 +138,7 @@ export default function ProductsPage() {
             }
             className="w-full bg-white border rounded-2xl px-5 py-3 outline-none focus:ring-2 focus:ring-black"
           />
+
         </div>
 
       </div>
@@ -161,7 +166,7 @@ export default function ProductsPage() {
 
       </div>
 
-      {/* Product Grid */}
+      {/* Products Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
         {paginatedProducts.map((product) => (
@@ -270,5 +275,6 @@ export default function ProductsPage() {
       )}
 
     </main>
+
   );
 }
