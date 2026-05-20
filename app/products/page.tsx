@@ -1,69 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 export default function ProductsPage() {
 
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const products = [
 
-  useEffect(() => {
+    {
+      _id: "1",
+      name: "Wireless Earbuds",
+      price: 1999,
+      image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
+      category: "Electronics",
+    },
 
-    async function fetchProducts() {
+    {
+      _id: "2",
+      name: "Elegant Summer Dress",
+      price: 1499,
+      image: "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
+      category: "Fashion",
+    },
 
-      try {
+    {
+      _id: "3",
+      name: "Luxury Skin Care Set",
+      price: 1599,
+      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
+      category: "Beauty",
+    },
 
-        const response = await fetch("/api/products");
+    {
+      _id: "4",
+      name: "Yoga Mat",
+      price: 899,
+      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      category: "Health",
+    },
 
-        const data = await response.json();
-
-        console.log(data);
-
-        if (data.products) {
-          setProducts(data.products);
-        }
-
-      } catch (error) {
-
-        console.log(error);
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    }
-
-    fetchProducts();
-
-  }, []);
-
-  if (loading) {
-
-    return (
-
-      <div className="min-h-screen flex items-center justify-center text-2xl">
-        Loading Products...
-      </div>
-
-    );
-
-  }
+  ];
 
   return (
 
     <main className="min-h-screen bg-gray-100 p-5">
 
       {/* Watermark */}
-      <div className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full z-50 shadow-xl">
+      <div className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full shadow-xl z-50">
         0o0o India • Coming Soon
       </div>
 
       {/* Header */}
       <div className="text-center mb-10">
 
-        <h1 className="text-4xl md:text-6xl font-extrabold">
+        <h1 className="text-5xl font-extrabold">
           0o0o India
         </h1>
 
@@ -80,7 +67,7 @@ export default function ProductsPage() {
 
           <div
             key={product._id}
-            className="bg-white rounded-2xl overflow-hidden shadow hover:shadow-2xl transition"
+            className="bg-white rounded-2xl overflow-hidden shadow-lg"
           >
 
             <img
@@ -91,7 +78,7 @@ export default function ProductsPage() {
 
             <div className="p-4">
 
-              <h2 className="font-bold text-lg line-clamp-2">
+              <h2 className="font-bold text-lg">
                 {product.name}
               </h2>
 
@@ -99,7 +86,7 @@ export default function ProductsPage() {
                 ₹{product.price}
               </p>
 
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-gray-500 mt-2">
                 {product.category}
               </p>
 
