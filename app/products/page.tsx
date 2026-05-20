@@ -1,93 +1,54 @@
-"use client";
+import { NextResponse } from "next/server";
 
-import { useEffect, useState } from "react";
+export async function GET() {
 
-export default function ProductsPage() {
+  const products = [
 
-  const [products, setProducts] = useState<any[]>([]);
+    {
+      _id: "1",
+      name: "Wireless Earbuds",
+      price: 1999,
+      image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
+      description: "Premium bluetooth earbuds.",
+      url: "#",
+      category: "Electronics",
+    },
 
-  useEffect(() => {
+    {
+      _id: "2",
+      name: "Elegant Summer Dress",
+      price: 1499,
+      image: "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
+      description: "Beautiful ladies dress.",
+      url: "#",
+      category: "Fashion and Apparel",
+    },
 
-    async function loadProducts() {
+    {
+      _id: "3",
+      name: "Luxury Skin Care Set",
+      price: 1599,
+      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
+      description: "Beauty products.",
+      url: "#",
+      category: "Beauty and Personal Care",
+    },
 
-      try {
+    {
+      _id: "4",
+      name: "Yoga Mat",
+      price: 899,
+      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
+      description: "Comfortable yoga mat.",
+      url: "#",
+      category: "Health and Wellness",
+    },
 
-        const res = await fetch("/api/products");
+  ];
 
-        const data = await res.json();
+  return NextResponse.json({
+    success: true,
+    products,
+  });
 
-        console.log(data);
-
-        setProducts(data.products || []);
-
-      } catch (error) {
-
-        console.log(error);
-
-      }
-
-    }
-
-    loadProducts();
-
-  }, []);
-
-  return (
-
-    <main className="min-h-screen bg-gray-100 p-5">
-
-      <h1 className="text-4xl font-bold text-center mb-8">
-        0o0o India
-      </h1>
-
-      {products.length === 0 ? (
-
-        <div className="text-center text-2xl">
-          Loading Products...
-        </div>
-
-      ) : (
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-
-          {products.map((product) => (
-
-            <div
-              key={product._id}
-              className="bg-white rounded-2xl overflow-hidden shadow"
-            >
-
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-56 object-cover"
-              />
-
-              <div className="p-4">
-
-                <h2 className="font-bold">
-                  {product.name}
-                </h2>
-
-                <p className="text-green-600 font-bold mt-2">
-                  ₹{product.price}
-                </p>
-
-                <p className="text-gray-500 text-sm mt-2">
-                  {product.category}
-                </p>
-
-              </div>
-
-            </div>
-
-          ))}
-
-        </div>
-
-      )}
-
-    </main>
-
-  );
 }
