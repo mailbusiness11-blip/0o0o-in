@@ -1,172 +1,270 @@
-import { NextResponse } from "next/server";
+"use client";
 
-const products = [
+import { useEffect, useState } from "react";
 
-  // Electronics
-  {
-    _id: "1",
-    name: "Wireless Earbuds",
-    price: 1999,
-    image:
-      "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=1200&auto=format&fit=crop",
-    description: "Premium bluetooth earbuds.",
-    url: "#",
-    category: "Electronics",
-  },
+interface ProductType {
+  _id: string;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+  url: string;
+  category?: string;
+}
 
-  {
-    _id: "2",
-    name: "Smart Watch",
-    price: 3499,
-    image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200&auto=format&fit=crop",
-    description: "Modern smart watch.",
-    url: "#",
-    category: "Electronics",
-  },
+export default function ProductsPage() {
 
-  // Fashion and Apparel
-  {
-    _id: "3",
-    name: "Elegant Summer Dress",
-    price: 1499,
-    image:
-      "https://img.kwcdn.com/product/fancy/f999168a-0700-4898-ba68-6bc93167cda2.jpg",
-    description: "Beautiful ladies dress.",
-    url: "#",
-    category: "Fashion and Apparel",
-  },
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  {
-    _id: "4",
-    name: "Women Casual Top",
-    price: 999,
-    image:
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1200&auto=format&fit=crop",
-    description: "Stylish casual top.",
-    url: "#",
-    category: "Fashion and Apparel",
-  },
+  const [selectedCategory, setSelectedCategory] =
+    useState("All");
 
-  // Grocery and Essentials
-  {
-    _id: "5",
-    name: "Organic Grocery Box",
-    price: 799,
-    image:
-      "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
-    description: "Healthy grocery essentials.",
-    url: "#",
-    category: "Grocery and Essentials",
-  },
+  const [searchQuery, setSearchQuery] =
+    useState("");
 
-  {
-    _id: "6",
-    name: "Kitchen Storage Container",
-    price: 499,
-    image:
-      "https://images.unsplash.com/photo-1584269600519-b2f6a7f0b1d1?q=80&w=1200&auto=format&fit=crop",
-    description: "Premium kitchen storage.",
-    url: "#",
-    category: "Grocery and Essentials",
-  },
+  const [currentPage, setCurrentPage] =
+    useState(1);
 
-  // Beauty and Personal Care
-  {
-    _id: "7",
-    name: "Skin Care Set",
-    price: 1599,
-    image:
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
-    description: "Luxury skincare products.",
-    url: "#",
-    category: "Beauty and Personal Care",
-  },
+  const itemsPerPage = 12;
 
-  {
-    _id: "8",
-    name: "Hair Dryer",
-    price: 1899,
-    image:
-      "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?q=80&w=1200&auto=format&fit=crop",
-    description: "Professional hair dryer.",
-    url: "#",
-    category: "Beauty and Personal Care",
-  },
+  // Fetch Products
+  useEffect(() => {
 
-  // Health and Wellness
-  {
-    _id: "9",
-    name: "Yoga Mat",
-    price: 899,
-    image:
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop",
-    description: "Comfortable yoga mat.",
-    url: "#",
-    category: "Health and Wellness",
-  },
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data.products || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
 
-  {
-    _id: "10",
-    name: "Fitness Dumbbells",
-    price: 2499,
-    image:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop",
-    description: "Gym dumbbell set.",
-    url: "#",
-    category: "Health and Wellness",
-  },
+  }, []);
 
-  // Pet Care
-  {
-    _id: "11",
-    name: "Pet Dog Bed",
-    price: 1299,
-    image:
-      "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop",
-    description: "Soft dog sleeping bed.",
-    url: "#",
-    category: "Pet Care",
-  },
+  // Fixed Categories
+  const categories = [
+    "All",
+    "Electronics",
+    "Fashion and Apparel",
+    "Grocery and Essentials",
+    "Beauty and Personal Care",
+    "Health and Wellness",
+    "Pet Care",
+    "Niche Fashion and Lifestyle",
+  ];
 
-  {
-    _id: "12",
-    name: "Pet Grooming Kit",
-    price: 999,
-    image:
-      "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?q=80&w=1200&auto=format&fit=crop",
-    description: "Pet grooming accessories.",
-    url: "#",
-    category: "Pet Care",
-  },
+  // Filter Products
+  const filteredProducts = products.filter((p) => {
 
-  // Niche Fashion and Lifestyle
-  {
-    _id: "13",
-    name: "Luxury Handbag",
-    price: 2899,
-    image:
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1200&auto=format&fit=crop",
-    description: "Premium fashion handbag.",
-    url: "#",
-    category: "Niche Fashion and Lifestyle",
-  },
+    const matchesCategory =
+      selectedCategory === "All" ||
+      p.category === selectedCategory;
 
-  {
-    _id: "14",
-    name: "Minimal Desk Lamp",
-    price: 1499,
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
-    description: "Modern lifestyle lamp.",
-    url: "#",
-    category: "Niche Fashion and Lifestyle",
-  },
+    const matchesSearch =
+      p.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
 
-];
+    return matchesCategory && matchesSearch;
 
-export async function GET() {
-  return NextResponse.json({
-    products,
   });
+
+  // Pagination
+  const totalPages = Math.ceil(
+    filteredProducts.length / itemsPerPage
+  );
+
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Reset Page
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl">
+        Loading products...
+      </div>
+    );
+  }
+
+  // No Products
+  if (products.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl">
+        No products found
+      </div>
+    );
+  }
+
+  return (
+
+    <main className="min-h-screen bg-gray-100 p-4">
+
+      {/* Header */}
+      <div className="mb-6">
+
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-5">
+          Fashion Store
+        </h1>
+
+        {/* Search */}
+        <div className="max-w-xl mx-auto">
+
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) =>
+              setSearchQuery(e.target.value)
+            }
+            className="w-full bg-white border rounded-2xl px-5 py-3 outline-none focus:ring-2 focus:ring-black"
+          />
+
+        </div>
+
+      </div>
+
+      {/* Categories */}
+      <div className="flex gap-2 overflow-x-auto pb-4 mb-6">
+
+        {categories.map((category) => (
+
+          <button
+            key={category}
+            onClick={() =>
+              setSelectedCategory(category)
+            }
+            className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition ${
+              selectedCategory === category
+                ? "bg-black text-white"
+                : "bg-white text-black border"
+            }`}
+          >
+            {category}
+          </button>
+
+        ))}
+
+      </div>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+        {paginatedProducts.map((product) => (
+
+          <div
+            key={product._id}
+            className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition duration-300"
+          >
+
+            {/* Image */}
+            <a
+              href={product.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-56 object-cover"
+              />
+
+            </a>
+
+            {/* Content */}
+            <div className="p-3">
+
+              <h2 className="font-semibold text-sm md:text-base line-clamp-2 min-h-[40px]">
+                {product.name}
+              </h2>
+
+              <p className="text-green-600 font-bold text-lg mt-1">
+                ₹{product.price}
+              </p>
+
+              <p className="text-gray-500 text-xs mt-1 line-clamp-2 min-h-[32px]">
+                {product.description}
+              </p>
+
+              <a
+                href={product.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-3 bg-black text-white text-center py-2 rounded-xl text-sm hover:bg-gray-800 transition"
+              >
+                View Product
+              </a>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+
+        <div className="flex justify-center items-center gap-2 mt-8 flex-wrap">
+
+          {/* Prev */}
+          <button
+            disabled={currentPage === 1}
+            onClick={() =>
+              setCurrentPage((prev) => prev - 1)
+            }
+            className="px-4 py-2 bg-white border rounded-xl disabled:opacity-40"
+          >
+            Prev
+          </button>
+
+          {/* Page Numbers */}
+          {Array.from(
+            { length: totalPages },
+            (_, i) => i + 1
+          ).map((page) => (
+
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-xl ${
+                currentPage === page
+                  ? "bg-black text-white"
+                  : "bg-white border"
+              }`}
+            >
+              {page}
+            </button>
+
+          ))}
+
+          {/* Next */}
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => prev + 1)
+            }
+            className="px-4 py-2 bg-white border rounded-xl disabled:opacity-40"
+          >
+            Next
+          </button>
+
+        </div>
+
+      )}
+
+    </main>
+
+  );
 }
